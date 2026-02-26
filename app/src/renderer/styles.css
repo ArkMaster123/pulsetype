@@ -1,0 +1,262 @@
+:root {
+  color-scheme: light;
+  --bg: #f2f5f8;
+  --card: #ffffff;
+  --text: #1a2430;
+  --muted: #526172;
+  --accent: #0088ff;
+  --accent-strong: #0068c3;
+  --border: #d0dbe6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Avenir Next", "SF Pro Text", "Helvetica Neue", Helvetica, sans-serif;
+  background:
+    radial-gradient(circle at 15% 10%, #d3e6ff 0%, rgb(211 230 255 / 0%) 33%),
+    radial-gradient(circle at 85% 0%, #d7fff2 0%, rgb(215 255 242 / 0%) 36%),
+    var(--bg);
+  color: var(--text);
+}
+
+.app-shell {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.65rem;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.subtitle {
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgb(9 86 150 / 30%);
+}
+
+.pill {
+  border: 1px solid var(--border);
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--muted);
+  background: #fff;
+}
+
+.voice-stage {
+  position: relative;
+  margin-top: 14px;
+  min-height: 130px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: linear-gradient(170deg, #f8fbff, #ebf4fb);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  width: 88px;
+  height: 88px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #57b0ff, #1b6ae0 55%, #1140a8);
+  opacity: 0.75;
+  filter: blur(0.2px);
+  transform: scale(0.8);
+}
+
+.orb-2 {
+  width: 118px;
+  height: 118px;
+  opacity: 0.32;
+}
+
+.orb-3 {
+  width: 146px;
+  height: 146px;
+  opacity: 0.18;
+}
+
+.voice-label {
+  position: relative;
+  z-index: 4;
+  color: #f7fbff;
+  font-weight: 700;
+  text-shadow: 0 2px 6px rgb(0 25 64 / 45%);
+}
+
+.voice-stage.recording .orb {
+  animation: pulse 1.15s ease-in-out infinite;
+}
+
+.voice-stage.recording .orb-2 {
+  animation-delay: 0.12s;
+}
+
+.voice-stage.recording .orb-3 {
+  animation-delay: 0.22s;
+}
+
+.voice-stage.transcribing .orb {
+  animation: breathe 1.7s ease-in-out infinite;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 14px;
+  box-shadow: 0 8px 22px rgb(20 44 70 / 8%);
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+label {
+  font-weight: 600;
+}
+
+select,
+input,
+button {
+  font: inherit;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+input {
+  min-width: 300px;
+}
+
+button {
+  cursor: pointer;
+}
+
+.buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+button.primary:hover {
+  background: var(--accent-strong);
+}
+
+#statusList {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.row-stack {
+  justify-content: flex-start;
+}
+
+.checkline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#logs {
+  margin: 0;
+  max-height: 180px;
+  overflow: auto;
+  background: #0e1621;
+  color: #d8e0ea;
+  border-radius: 10px;
+  padding: 10px;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 640px) {
+  .top-nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  select,
+  input {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.82);
+    filter: blur(0.3px);
+  }
+  50% {
+    transform: scale(1.06);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(0.82);
+    filter: blur(0.3px);
+  }
+}
+
+@keyframes breathe {
+  0% {
+    transform: scale(0.88);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(0.88);
+    opacity: 0.3;
+  }
+}

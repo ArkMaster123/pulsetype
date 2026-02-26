@@ -1,0 +1,39 @@
+{
+  "name": "pulsetype",
+  "version": "0.1.0",
+  "description": "PulseType macOS dictation app with Whisper.cpp",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --mac",
+    "bench:stt": "node scripts/benchmark-stt.mjs"
+  },
+  "keywords": [
+    "dictation",
+    "whisper",
+    "macos",
+    "electron"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^37.5.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.pulsetype.app",
+    "productName": "PulseType",
+    "mac": {
+      "identity": null,
+      "category": "public.app-category.productivity",
+      "target": [
+        "dmg"
+      ]
+    },
+    "files": [
+      "src/**/*",
+      "scripts/**/*",
+      "package.json"
+    ]
+  }
+}

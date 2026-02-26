@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PulseType</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="top-nav">
+        <div class="brand">
+          <img class="logo" src="assets/pulsetype-icon.svg" alt="PulseType logo" />
+          <div>
+            <h1>PulseType</h1>
+            <p class="subtitle">Desktop dictation with local ASR and Siri-style pulse.</p>
+          </div>
+        </div>
+        <div class="pill" id="liveState">Idle</div>
+      </header>
+
+      <section class="voice-stage" id="voiceStage">
+        <div class="orb"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="voice-label" id="voiceLabel">Ready</div>
+      </section>
+
+      <section class="card">
+        <div class="row">
+          <label for="model">Model</label>
+          <select id="model">
+            <option value="tiny">tiny (39M, multilingual)</option>
+            <option value="base">base (74M, multilingual)</option>
+            <option value="base.en">base.en (142 MB)</option>
+            <option value="small">small (244M, multilingual)</option>
+            <option value="small.en">small.en (466 MB)</option>
+            <option value="medium">medium (769M, multilingual)</option>
+            <option value="medium.en">medium.en (1.5 GB)</option>
+          </select>
+        </div>
+        <div class="row">
+          <label for="language">Language</label>
+          <select id="language">
+            <option value="en">English</option>
+            <option value="zh">Chinese (Mandarin)</option>
+            <option value="auto">Auto Detect</option>
+          </select>
+        </div>
+        <div class="buttons">
+          <button id="downloadModel">Download Model</button>
+          <button id="toggleRecord" class="primary">Start Dictation</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>LM Studio Polish</h2>
+        <div class="row row-stack">
+          <label class="checkline"><input id="lmStudioEnabled" type="checkbox" /> Improve punctuation via local LLM</label>
+        </div>
+        <div class="row">
+          <label for="lmStudioBaseUrl">Base URL</label>
+          <input id="lmStudioBaseUrl" type="text" value="http://127.0.0.1:1234/v1" />
+        </div>
+        <div class="row">
+          <label for="lmStudioModel">Model (optional)</label>
+          <input id="lmStudioModel" type="text" placeholder="Leave blank to use LM Studio default" />
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Status</h2>
+        <ul id="statusList"></ul>
+      </section>
+
+      <section class="card">
+        <h2>Activity</h2>
+        <pre id="logs"></pre>
+      </section>
+    </main>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>

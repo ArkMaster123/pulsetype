@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# dependencies / build outputs
+**/node_modules/
+**/dist/
+*.log
+
+# local references and large cloned repos
+references/
+
+# editor
+.vscode/
+.idea/
