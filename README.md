@@ -10,6 +10,7 @@ Local-first macOS dictation app for creators who want a Wispr-like flow with pri
 - Live streaming transcript textbox while dictating (`whisper-stream`)
 - Local Whisper transcription (`whisper.cpp`) plus optional MLX engine
 - Menu bar tray icon with recording/transcribing state animation
+- Quick Start onboarding with Local vs OpenRouter choice and latency guidance
 - Optional LM Studio or OpenRouter cleanup pass for punctuation/casing
 - Hugging Face ASR model search, hardware scan, and benchmark runner
 

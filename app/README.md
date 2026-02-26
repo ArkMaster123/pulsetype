@@ -10,6 +10,7 @@ Local-first macOS dictation app with a global shortcut:
 - Switchable transcription engines: `whisper.cpp` or MLX
 - Hardware scan and in-app benchmark runner
 - Menu bar tray icon animates for recording/transcribing states
+- First-run Quick Start flow explains Local vs OpenRouter with expected latency ranges
 
 ## Requirements
 
@@ -36,6 +37,8 @@ npm start
 2. Paste your OpenRouter key (`sk-or-v1-...`)
 3. Click **Refresh OpenRouter Models** to fetch voice-capable models
 4. Pick a model (default: `mistralai/voxtral-small-24b-2507`)
+
+If no API key is present, the app now prompts immediately in Quick Start and blocks OpenRouter model refresh until a key is entered.
 
 ## Chinese setup
 

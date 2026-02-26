@@ -194,35 +194,6 @@ mic -> vad -> whisper-stream -> polish -> paste
       </section>
     </main>
 
-    <script>
-      const vizContainer = document.getElementById("vizBars");
-      const barCount = 40;
-      for (let i = 0; i < barCount; i += 1) {
-        const bar = document.createElement("div");
-        bar.className = "viz-bar";
-        bar.style.height = `${6 + Math.random() * 16}px`;
-        vizContainer.appendChild(bar);
-      }
-
-      function animateBars() {
-        const bars = vizContainer.querySelectorAll(".viz-bar");
-        bars.forEach((bar, i) => {
-          const h = 5 + Math.sin(Date.now() / 550 + i * 0.2) * 8 + Math.random() * 5;
-          bar.style.height = `${Math.max(4, h)}px`;
-          bar.style.opacity = `${0.14 + Math.abs(Math.sin(Date.now() / 1300 + i * 0.16)) * 0.48}`;
-        });
-        requestAnimationFrame(animateBars);
-      }
-      animateBars();
-
-      const providerSelect = document.getElementById("provider");
-      document.querySelectorAll(".engine-toggle button").forEach((button) => {
-        button.addEventListener("click", () => {
-          providerSelect.value = button.dataset.provider;
-          providerSelect.dispatchEvent(new Event("change"));
-        });
-      });
-    </script>
     <script src="renderer.js"></script>
   </body>
 </html>

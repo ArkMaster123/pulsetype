@@ -38,6 +38,42 @@ const onboardingHint = document.getElementById("onboardingHint");
 
 let onboardingSelection = null;
 
+function initVisualizer() {
+  const vizContainer = document.getElementById("vizBars");
+  if (!vizContainer || vizContainer.children.length > 0) {
+    return;
+  }
+
+  const barCount = 40;
+  for (let i = 0; i < barCount; i += 1) {
+    const bar = document.createElement("div");
+    bar.className = "viz-bar";
+    bar.style.height = `${6 + Math.random() * 16}px`;
+    vizContainer.appendChild(bar);
+  }
+
+  function animateBars() {
+    const bars = vizContainer.querySelectorAll(".viz-bar");
+    bars.forEach((bar, i) => {
+      const h = 5 + Math.sin(Date.now() / 550 + i * 0.2) * 8 + Math.random() * 5;
+      bar.style.height = `${Math.max(4, h)}px`;
+      bar.style.opacity = `${0.14 + Math.abs(Math.sin(Date.now() / 1300 + i * 0.16)) * 0.48}`;
+    });
+    requestAnimationFrame(animateBars);
+  }
+
+  animateBars();
+}
+
+function bindEngineToggleButtons() {
+  document.querySelectorAll(".engine-toggle button").forEach((button) => {
+    button.addEventListener("click", () => {
+      providerSelect.value = button.dataset.provider;
+      providerSelect.dispatchEvent(new Event("change"));
+    });
+  });
+}
+
 const PULSETYPE_ASCII = String.raw`
    .-""-.
   / .--. \
@@ -91,7 +127,9 @@ function updateOnboardingUI() {
   const hasApiKey = Boolean(onboardingOpenRouterApiKey.value.trim() || openRouterApiKey.value.trim());
   onboardingContinue.textContent = hasApiKey ? "Use OpenRouter" : "Enter API key to continue";
   onboardingContinue.disabled = !hasApiKey;
-  onboardingHint.textContent = "Cloud mode is often fast but depends on network and API credits.";
+  onboardingHint.textContent = hasApiKey
+    ? "Cloud mode is often fast but depends on network and API credits."
+    : "Add your OpenRouter API key now to continue with cloud mode.";
 }
 
 function setOnboardingSelection(mode) {
@@ -425,8 +463,15 @@ openRouterModel.addEventListener("change", async () => {
 
 refreshOpenRouterModels.addEventListener("click", async () => {
   try {
+    const key = openRouterApiKey.value.trim();
+    if (!key) {
+      appendLog("OpenRouter API key required. Add key in Controls & Routing first.");
+      openRouterApiKey.focus();
+      return;
+    }
+
     await savePatch({
-      openRouterApiKey: openRouterApiKey.value.trim(),
+      openRouterApiKey: key,
       openRouterBaseUrl: openRouterBaseUrl.value.trim()
     });
     const result = await window.localWhispr.getOpenRouterVoiceModels();
@@ -491,6 +536,9 @@ modeLocalButton.addEventListener("click", () => {
 
 modeOpenRouterButton.addEventListener("click", () => {
   setOnboardingSelection("openrouter");
+  if (!onboardingOpenRouterApiKey.value.trim() && !openRouterApiKey.value.trim()) {
+    onboardingOpenRouterApiKey.focus();
+  }
 });
 
 onboardingOpenRouterApiKey.addEventListener("input", () => {
@@ -508,3 +556,5 @@ onboardingContinue.addEventListener("click", async () => {
 refreshStatus().catch((error) => appendLog(error.message));
 window.localWhispr.scanHardware().then(renderHardware).catch(() => {});
 renderWelcomeArt();
+initVisualizer();
+bindEngineToggleButtons();
