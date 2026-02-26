@@ -7,10 +7,11 @@ Local-first macOS dictation app for creators who want a Wispr-like flow with pri
 ## Highlights
 
 - Global shortcut dictation flow
-- Local Whisper transcription (`whisper.cpp`)
-- Siri-style animated desktop UI
-- Optional LM Studio cleanup pass for punctuation/casing
-- Benchmark runner for comparing local vs OpenAI-compatible ASR endpoints
+- Live streaming transcript textbox while dictating (`whisper-stream`)
+- Local Whisper transcription (`whisper.cpp`) plus optional MLX engine
+- Menu bar tray icon with recording/transcribing state animation
+- Optional LM Studio or OpenRouter cleanup pass for punctuation/casing
+- Hugging Face ASR model search, hardware scan, and benchmark runner
 
 ## Project layout
 
@@ -25,6 +26,12 @@ cd app
 brew install whisper-cpp sox
 npm install
 npm start
+```
+
+Optional MLX runtime:
+
+```bash
+python3 -m pip install mlx-whisper
 ```
 
 ## Packaging

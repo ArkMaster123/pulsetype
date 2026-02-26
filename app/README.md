@@ -3,11 +3,13 @@
 Local-first macOS dictation app with a global shortcut:
 
 - Hit `Command+Shift+Space` to start recording
-- Hit it again to stop, transcribe with `whisper-cli`, and paste text at cursor
+- Hit it again to stop, finalize transcript, and paste text at cursor
+- Live transcript streams into the in-app textbox while you dictate
 - Optional LM Studio post-processing for punctuation/casing cleanup
 - Optional OpenRouter cloud polish with voice-model dropdown (`/models` API)
 - Switchable transcription engines: `whisper.cpp` or MLX
 - Hardware scan and in-app benchmark runner
+- Menu bar tray icon animates for recording/transcribing states
 
 ## Requirements
 
@@ -27,6 +29,13 @@ python3 -m pip install mlx-whisper
 npm install
 npm start
 ```
+
+## OpenRouter setup
+
+1. In app, open **Controls & Routing -> OpenRouter Voice**
+2. Paste your OpenRouter key (`sk-or-v1-...`)
+3. Click **Refresh OpenRouter Models** to fetch voice-capable models
+4. Pick a model (default: `mistralai/voxtral-small-24b-2507`)
 
 ## Chinese setup
 
@@ -61,6 +70,7 @@ The DMG lands in `dist/`.
 - Run "Scan Hardware" to see free RAM/disk and model cache size
 - Run "Find Models" to search Hugging Face ASR models from inside the app
 - Run "Run Benchmark" to compare available local models on your own audio file
+- Watch partial transcription in the Live Transcript panel in real time
 
 ## Model location
 

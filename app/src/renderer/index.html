@@ -7,169 +7,222 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <div class="ascii-bg" aria-hidden="true">
+      <pre>
+██████╗ ██╗   ██╗██╗     ███████╗███████╗████████╗██╗   ██╗██████╗ ███████╗
+██╔══██╗██║   ██║██║     ██╔════╝██╔════╝╚══██╔══╝╚██╗ ██╔╝██╔══██╗██╔════╝
+██████╔╝██║   ██║██║     ███████╗█████╗     ██║    ╚████╔╝ ██████╔╝█████╗
+██╔═══╝ ██║   ██║██║     ╚════██║██╔══╝     ██║     ╚██╔╝  ██╔═══╝ ██╔══╝
+██║     ╚██████╔╝███████╗███████║███████╗   ██║      ██║   ██║     ███████╗
+╚═╝      ╚═════╝ ╚══════╝╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝     ╚══════╝
+      </pre>
+      <pre class="layer-2">
+mic -> vad -> whisper-stream -> polish -> paste
+mic -> vad -> whisper-stream -> polish -> paste
+mic -> vad -> whisper-stream -> polish -> paste
+      </pre>
+    </div>
+
     <main class="app-shell">
-      <header class="top-nav">
-        <div class="brand">
-          <img class="logo" src="assets/pulsetype-icon.svg" alt="PulseType logo" />
+      <div class="roast-banner">PulseType Control Center</div>
+
+      <header class="header">
+        <div class="header-left">
+          <img class="logo-mark" src="assets/pulsetype-icon.svg" alt="PulseType logo" />
           <div>
-            <h1>PulseType</h1>
-            <p class="subtitle">Local-first voice command center for Apple Silicon.</p>
+            <div class="header-title">PulseType</div>
+            <div class="header-sub">local-first voice -> text on Apple Silicon</div>
           </div>
         </div>
-        <div class="live-wrap">
-          <div class="pill" id="liveState">Idle</div>
-        </div>
+        <div class="status-chip ready" id="liveState">ready</div>
       </header>
 
-      <section class="hero-panel" id="voiceStage">
-        <div class="orb"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="voice-label" id="voiceLabel">Ready</div>
+      <section class="visualizer-panel" id="voiceStage">
+        <div class="viz-bars" id="vizBars"></div>
+        <div class="viz-status" id="voiceLabel">awaiting input<span class="cursor">_</span></div>
+      </section>
+
+      <section class="engine-panel" id="onboardingPanel">
+        <div class="section-label">Quick Start</div>
+        <p class="onboarding-subtitle">Pick one mode to begin. You can switch anytime in settings.</p>
+
+        <div class="quick-start-grid">
+          <button class="mode-card" id="modeLocal" type="button" data-mode="whispercpp">
+            <div class="mode-title">Local Whisper</div>
+            <div class="mode-latency">200-900 ms typical</div>
+            <div class="mode-meta">Privacy: highest · Cost: $0</div>
+          </button>
+
+          <button class="mode-card" id="modeOpenRouter" type="button" data-mode="openrouter">
+            <div class="mode-title">OpenRouter Cloud</div>
+            <div class="mode-latency">350-1400 ms typical</div>
+            <div class="mode-meta">Privacy: lower · Cost: usage based</div>
+          </button>
+        </div>
+
+        <div id="onboardingCloudFields" class="onboarding-cloud hidden">
+          <label class="field-label" for="onboardingOpenRouterApiKey">OpenRouter API key</label>
+          <input class="field-input" id="onboardingOpenRouterApiKey" type="password" placeholder="sk-or-v1-..." />
+          <div class="onboarding-note">Needed only for OpenRouter mode. Stored locally in app config.</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="onboardingContinue" type="button" disabled>Choose a mode to continue</button>
+        </div>
+        <div class="onboarding-note" id="onboardingHint">Recommended default: Local Whisper for privacy and zero cost.</div>
+      </section>
+
+      <section class="engine-panel">
+        <div class="section-label">Transcription Engine</div>
+
+        <div class="engine-toggle">
+          <button class="active" data-provider="whispercpp" type="button">whisper.cpp</button>
+          <button data-provider="mlx" type="button">mlx</button>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="provider">Engine</label>
+          <select class="field-select" id="provider">
+            <option value="whispercpp">Whisper.cpp (stable)</option>
+            <option value="mlx">MLX (Apple Silicon)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="model">Whisper model</label>
+          <select class="field-select" id="model">
+            <option value="tiny">tiny (39M)</option>
+            <option value="base">base (74M)</option>
+            <option value="base.en">base.en (142 MB)</option>
+            <option value="small">small (244M)</option>
+            <option value="small.en">small.en (466 MB)</option>
+            <option value="medium">medium (769M)</option>
+            <option value="medium.en">medium.en (1.5 GB)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="mlxModel">MLX model id</label>
+          <input class="field-input" id="mlxModel" type="text" placeholder="mlx-community/whisper-large-v3-turbo" />
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="language">Language</label>
+          <select class="field-select" id="language">
+            <option value="en">English</option>
+            <option value="zh">Chinese (Mandarin)</option>
+            <option value="fr">French</option>
+            <option value="auto">Auto Detect</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-secondary" id="downloadModel" type="button">Download Model</button>
+          <button class="btn btn-primary" id="toggleRecord" type="button">Start Dictation</button>
+        </div>
       </section>
 
       <section class="grid-two">
-        <article class="card">
-          <div class="card-title-row">
-            <h2>Transcription Engine</h2>
-            <div class="badge-row">
-              <span class="provider-badge provider-whisper"><img src="assets/icon-whispercpp.svg" alt="" />Whisper.cpp</span>
-              <span class="provider-badge provider-mlx"><img src="assets/icon-mlx.svg" alt="" />MLX</span>
-            </div>
-          </div>
+        <article class="engine-panel compact">
+          <div class="section-label">Routing</div>
 
-          <div class="row">
-            <label for="provider">Engine</label>
-            <select id="provider">
-              <option value="whispercpp">Whisper.cpp (stable)</option>
-              <option value="mlx">MLX (Apple Silicon)</option>
-            </select>
-          </div>
-          <div class="row">
-            <label for="model">Whisper model</label>
-            <select id="model">
-              <option value="tiny">tiny (39M)</option>
-              <option value="base">base (74M)</option>
-              <option value="base.en">base.en (142 MB)</option>
-              <option value="small">small (244M)</option>
-              <option value="small.en">small.en (466 MB)</option>
-              <option value="medium">medium (769M)</option>
-              <option value="medium.en">medium.en (1.5 GB)</option>
-            </select>
-          </div>
-          <div class="row">
-            <label for="mlxModel">MLX model id</label>
-            <input id="mlxModel" type="text" placeholder="mlx-community/whisper-large-v3-turbo" />
-          </div>
-          <div class="row">
-            <label for="language">Language</label>
-            <select id="language">
-              <option value="en">English</option>
-              <option value="zh">Chinese (Mandarin)</option>
-              <option value="fr">French</option>
-              <option value="auto">Auto Detect</option>
-            </select>
-          </div>
-          <div class="buttons">
-            <button id="downloadModel">Download Model</button>
-            <button id="toggleRecord" class="primary">Start Dictation</button>
+          <label class="checkline"><input id="lmStudioEnabled" type="checkbox" /> LM Studio polish</label>
+          <input class="field-input" id="lmStudioBaseUrl" type="text" placeholder="LM Studio URL" value="http://127.0.0.1:1234/v1" />
+          <input class="field-input" id="lmStudioModel" type="text" placeholder="LM Studio model id" />
+
+          <label class="checkline"><input id="openRouterEnabled" type="checkbox" /> OpenRouter polish</label>
+          <input class="field-input" id="openRouterApiKey" type="password" placeholder="OpenRouter API key" />
+          <input class="field-input" id="openRouterBaseUrl" type="text" value="https://openrouter.ai/api/v1" />
+          <select class="field-select" id="openRouterModel">
+            <option value="mistralai/voxtral-small-24b-2507">mistralai/voxtral-small-24b-2507</option>
+          </select>
+
+          <div class="actions">
+            <button class="btn btn-secondary" id="refreshOpenRouterModels" type="button">Refresh OpenRouter Models</button>
           </div>
         </article>
 
-        <article class="card">
-          <h2>Controls & Routing</h2>
-          <div class="row">
-            <label for="hotkeyInput">Keyboard shortcut</label>
-            <input id="hotkeyInput" type="text" placeholder="CommandOrControl+Shift+Space" />
-          </div>
-          <div class="buttons">
-            <button id="saveHotkey">Save Hotkey</button>
+        <article class="engine-panel compact">
+          <div class="section-label">System</div>
+
+          <input class="field-input" id="hotkeyInput" type="text" placeholder="CommandOrControl+Shift+Space" />
+          <div class="actions">
+            <button class="btn btn-secondary" id="saveHotkey" type="button">Save Hotkey</button>
+            <button class="btn btn-secondary" id="scanHardware" type="button">Scan Hardware</button>
           </div>
 
-          <h3>LM Studio Polish</h3>
-          <label class="checkline"><input id="lmStudioEnabled" type="checkbox" /> <img src="assets/icon-lmstudio.svg" alt="" /> Improve punctuation with local LLM</label>
-          <div class="row">
-            <label for="lmStudioBaseUrl">Base URL</label>
-            <input id="lmStudioBaseUrl" type="text" value="http://127.0.0.1:1234/v1" />
-          </div>
-          <div class="row">
-            <label for="lmStudioModel">Model id</label>
-            <input id="lmStudioModel" type="text" placeholder="local model id" />
+          <div class="actions">
+            <button class="btn btn-secondary" id="runBenchmark" type="button">Run Benchmark</button>
+            <button class="btn btn-secondary" id="clearBenchmark" type="button">Clear</button>
           </div>
 
-          <h3>OpenRouter Voice</h3>
-          <label class="checkline"><input id="openRouterEnabled" type="checkbox" /> <img src="assets/icon-openrouter.svg" alt="" /> Use OpenRouter cloud polish</label>
-          <div class="row">
-            <label for="openRouterApiKey">OpenRouter API key</label>
-            <input id="openRouterApiKey" type="password" placeholder="sk-or-v1-..." />
-          </div>
-          <div class="row">
-            <label for="openRouterBaseUrl">Base URL</label>
-            <input id="openRouterBaseUrl" type="text" value="https://openrouter.ai/api/v1" />
-          </div>
-          <div class="row">
-            <label for="openRouterModel">Voice model</label>
-            <select id="openRouterModel">
-              <option value="mistralai/voxtral-small-24b-2507">mistralai/voxtral-small-24b-2507</option>
-            </select>
-          </div>
-          <div class="buttons">
-            <button id="refreshOpenRouterModels">Refresh OpenRouter Models</button>
-          </div>
-        </article>
-      </section>
-
-      <section class="grid-two">
-        <article class="card">
-          <h2>Hardware Scan</h2>
-          <div class="buttons">
-            <button id="scanHardware">Scan Hardware</button>
-          </div>
           <ul id="hardwareList"></ul>
         </article>
-
-        <article class="card">
-          <h2>Benchmark</h2>
-          <div class="buttons">
-            <button id="runBenchmark">Run Benchmark</button>
-            <button id="clearBenchmark">Clear</button>
-          </div>
-          <pre id="benchmarkOutput"></pre>
-        </article>
       </section>
 
-      <section class="card">
-        <div class="card-title-row">
-          <h2>Model Discovery</h2>
-          <span class="provider-badge provider-hf"><img src="assets/icon-huggingface.svg" alt="" /> Hugging Face ASR</span>
-        </div>
-        <div class="row">
-          <label for="modelSearch">Search</label>
-          <input id="modelSearch" type="text" placeholder="voxtral, qwen3-asr, whisper, moonshine" />
-        </div>
-        <div class="buttons">
-          <button id="searchModels">Find Models</button>
+      <section class="engine-panel compact">
+        <div class="section-label">Model Search (Hugging Face)</div>
+        <div class="actions">
+          <input class="field-input" id="modelSearch" type="text" placeholder="voxtral, qwen3-asr, whisper" />
+          <button class="btn btn-secondary" id="searchModels" type="button">Find Models</button>
         </div>
         <ul id="modelSearchResults" class="model-list"></ul>
       </section>
 
-      <section class="card">
-        <h2>Live Transcript</h2>
-        <textarea id="liveTranscript" rows="5" placeholder="Streaming transcript appears here while you dictate..."></textarea>
+      <section class="grid-two">
+        <article class="engine-panel compact">
+          <div class="section-label">Live Transcript</div>
+          <textarea id="liveTranscript" rows="8" placeholder="Streaming transcript appears here while you dictate..."></textarea>
+        </article>
+
+        <article class="engine-panel compact">
+          <div class="section-label">Benchmark Output</div>
+          <pre id="benchmarkOutput"></pre>
+        </article>
       </section>
 
       <section class="grid-two">
-        <article class="card">
-          <h2>Status</h2>
+        <article class="engine-panel compact">
+          <div class="section-label">Status</div>
           <ul id="statusList"></ul>
         </article>
-        <article class="card">
-          <h2>Activity</h2>
+
+        <article class="engine-panel compact">
+          <div class="section-label">Activity</div>
           <pre id="logs"></pre>
         </article>
       </section>
     </main>
 
+    <script>
+      const vizContainer = document.getElementById("vizBars");
+      const barCount = 40;
+      for (let i = 0; i < barCount; i += 1) {
+        const bar = document.createElement("div");
+        bar.className = "viz-bar";
+        bar.style.height = `${6 + Math.random() * 16}px`;
+        vizContainer.appendChild(bar);
+      }
+
+      function animateBars() {
+        const bars = vizContainer.querySelectorAll(".viz-bar");
+        bars.forEach((bar, i) => {
+          const h = 5 + Math.sin(Date.now() / 550 + i * 0.2) * 8 + Math.random() * 5;
+          bar.style.height = `${Math.max(4, h)}px`;
+          bar.style.opacity = `${0.14 + Math.abs(Math.sin(Date.now() / 1300 + i * 0.16)) * 0.48}`;
+        });
+        requestAnimationFrame(animateBars);
+      }
+      animateBars();
+
+      const providerSelect = document.getElementById("provider");
+      document.querySelectorAll(".engine-toggle button").forEach((button) => {
+        button.addEventListener("click", () => {
+          providerSelect.value = button.dataset.provider;
+          providerSelect.dispatchEvent(new Event("change"));
+        });
+      });
+    </script>
     <script src="renderer.js"></script>
   </body>
 </html>

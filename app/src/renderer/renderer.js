@@ -28,6 +28,15 @@ const liveTranscript = document.getElementById("liveTranscript");
 const voiceStage = document.getElementById("voiceStage");
 const voiceLabel = document.getElementById("voiceLabel");
 const liveState = document.getElementById("liveState");
+const onboardingPanel = document.getElementById("onboardingPanel");
+const modeLocalButton = document.getElementById("modeLocal");
+const modeOpenRouterButton = document.getElementById("modeOpenRouter");
+const onboardingCloudFields = document.getElementById("onboardingCloudFields");
+const onboardingOpenRouterApiKey = document.getElementById("onboardingOpenRouterApiKey");
+const onboardingContinue = document.getElementById("onboardingContinue");
+const onboardingHint = document.getElementById("onboardingHint");
+
+let onboardingSelection = null;
 
 const PULSETYPE_ASCII = String.raw`
    .-""-.
@@ -49,6 +58,80 @@ function appendLog(message) {
 
 function renderWelcomeArt() {
   logs.textContent = `${PULSETYPE_ASCII}\n\n${logs.textContent}`.slice(0, 12000);
+}
+
+function syncEngineToggleUI(provider) {
+  document.querySelectorAll(".engine-toggle button").forEach((button) => {
+    const isActive = button.dataset.provider === provider;
+    button.classList.toggle("active", isActive);
+  });
+}
+
+function updateOnboardingUI() {
+  modeLocalButton.classList.toggle("active", onboardingSelection === "whispercpp");
+  modeOpenRouterButton.classList.toggle("active", onboardingSelection === "openrouter");
+
+  const needsCloud = onboardingSelection === "openrouter";
+  onboardingCloudFields.classList.toggle("hidden", !needsCloud);
+
+  if (!onboardingSelection) {
+    onboardingContinue.textContent = "Choose a mode to continue";
+    onboardingContinue.disabled = true;
+    onboardingHint.textContent = "Recommended default: Local Whisper for privacy and zero cost.";
+    return;
+  }
+
+  if (onboardingSelection === "whispercpp") {
+    onboardingContinue.textContent = "Use Local Whisper";
+    onboardingContinue.disabled = false;
+    onboardingHint.textContent = "Local mode keeps audio on your device and works offline.";
+    return;
+  }
+
+  const hasApiKey = Boolean(onboardingOpenRouterApiKey.value.trim() || openRouterApiKey.value.trim());
+  onboardingContinue.textContent = hasApiKey ? "Use OpenRouter" : "Enter API key to continue";
+  onboardingContinue.disabled = !hasApiKey;
+  onboardingHint.textContent = "Cloud mode is often fast but depends on network and API credits.";
+}
+
+function setOnboardingSelection(mode) {
+  onboardingSelection = mode;
+  updateOnboardingUI();
+}
+
+async function applyOnboardingChoice() {
+  if (!onboardingSelection) {
+    return;
+  }
+
+  if (onboardingSelection === "whispercpp") {
+    await savePatch(
+      {
+        transcriptionProvider: "whispercpp",
+        openRouterEnabled: false
+      },
+      "Quick Start: Local Whisper selected."
+    );
+  } else {
+    const apiKey = onboardingOpenRouterApiKey.value.trim() || openRouterApiKey.value.trim();
+    if (!apiKey) {
+      onboardingHint.textContent = "Enter your OpenRouter API key first.";
+      onboardingContinue.disabled = true;
+      return;
+    }
+
+    await savePatch(
+      {
+        transcriptionProvider: "whispercpp",
+        openRouterEnabled: true,
+        openRouterApiKey: apiKey
+      },
+      "Quick Start: OpenRouter mode enabled."
+    );
+  }
+
+  localStorage.setItem("pulsetype.onboarding.dismissed", "true");
+  onboardingPanel.classList.add("hidden");
 }
 
 function renderStatus(status) {
@@ -98,6 +181,20 @@ async function refreshStatus() {
   openRouterBaseUrl.value = status.config.openRouterBaseUrl || "https://openrouter.ai/api/v1";
   await ensureOpenRouterModelOption(status.config.openRouterModel || "mistralai/voxtral-small-24b-2507");
   openRouterModel.value = status.config.openRouterModel || "mistralai/voxtral-small-24b-2507";
+  syncEngineToggleUI(status.config.transcriptionProvider);
+
+  const dismissed = localStorage.getItem("pulsetype.onboarding.dismissed") === "true";
+  onboardingPanel.classList.toggle("hidden", dismissed);
+  if (!dismissed) {
+    if (status.config.openRouterEnabled && status.config.openRouterApiKey) {
+      onboardingSelection = "openrouter";
+    } else {
+      onboardingSelection = "whispercpp";
+    }
+    onboardingOpenRouterApiKey.value = status.config.openRouterApiKey || "";
+    updateOnboardingUI();
+  }
+
   renderStatus(status);
 }
 
@@ -232,6 +329,7 @@ downloadButton.addEventListener("click", async () => {
 providerSelect.addEventListener("change", async () => {
   try {
     await savePatch({ transcriptionProvider: providerSelect.value }, `Provider set to ${providerSelect.value}.`);
+    syncEngineToggleUI(providerSelect.value);
   } catch (error) {
     appendLog(error.message);
   }
@@ -384,6 +482,26 @@ searchModelsButton.addEventListener("click", async () => {
   } catch (error) {
     renderSearchResults([]);
     appendLog(`Model search failed: ${error.message}`);
+  }
+});
+
+modeLocalButton.addEventListener("click", () => {
+  setOnboardingSelection("whispercpp");
+});
+
+modeOpenRouterButton.addEventListener("click", () => {
+  setOnboardingSelection("openrouter");
+});
+
+onboardingOpenRouterApiKey.addEventListener("input", () => {
+  updateOnboardingUI();
+});
+
+onboardingContinue.addEventListener("click", async () => {
+  try {
+    await applyOnboardingChoice();
+  } catch (error) {
+    appendLog(`Quick Start failed: ${error.message}`);
   }
 });
 
