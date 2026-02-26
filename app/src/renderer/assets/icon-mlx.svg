@@ -1,0 +1,5 @@
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MLX icon">
+  <rect x="2" y="2" width="20" height="20" rx="6" fill="#0e1626"/>
+  <rect x="6" y="6" width="12" height="12" rx="2.6" stroke="#8be8ff" stroke-width="1.3" fill="none"/>
+  <path d="M8 14.5 11 10.5h2L10.8 14h2.4L16 9.5" stroke="#39d6ff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

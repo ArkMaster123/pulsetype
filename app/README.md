@@ -5,11 +5,20 @@ Local-first macOS dictation app with a global shortcut:
 - Hit `Command+Shift+Space` to start recording
 - Hit it again to stop, transcribe with `whisper-cli`, and paste text at cursor
 - Optional LM Studio post-processing for punctuation/casing cleanup
+- Optional OpenRouter cloud polish with voice-model dropdown (`/models` API)
+- Switchable transcription engines: `whisper.cpp` or MLX
+- Hardware scan and in-app benchmark runner
 
 ## Requirements
 
 ```bash
 brew install whisper-cpp sox
+```
+
+Optional MLX engine:
+
+```bash
+python3 -m pip install mlx-whisper
 ```
 
 ## Run
@@ -45,6 +54,13 @@ npm run dist
 ```
 
 The DMG lands in `dist/`.
+
+## In-app features
+
+- Change keyboard shortcut in the Controls panel
+- Run "Scan Hardware" to see free RAM/disk and model cache size
+- Run "Find Models" to search Hugging Face ASR models from inside the app
+- Run "Run Benchmark" to compare available local models on your own audio file
 
 ## Model location
 

@@ -13,69 +13,160 @@
           <img class="logo" src="assets/pulsetype-icon.svg" alt="PulseType logo" />
           <div>
             <h1>PulseType</h1>
-            <p class="subtitle">Desktop dictation with local ASR and Siri-style pulse.</p>
+            <p class="subtitle">Local-first voice command center for Apple Silicon.</p>
           </div>
         </div>
-        <div class="pill" id="liveState">Idle</div>
+        <div class="live-wrap">
+          <div class="pill" id="liveState">Idle</div>
+        </div>
       </header>
 
-      <section class="voice-stage" id="voiceStage">
+      <section class="hero-panel" id="voiceStage">
         <div class="orb"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
         <div class="voice-label" id="voiceLabel">Ready</div>
       </section>
 
+      <section class="grid-two">
+        <article class="card">
+          <div class="card-title-row">
+            <h2>Transcription Engine</h2>
+            <div class="badge-row">
+              <span class="provider-badge provider-whisper"><img src="assets/icon-whispercpp.svg" alt="" />Whisper.cpp</span>
+              <span class="provider-badge provider-mlx"><img src="assets/icon-mlx.svg" alt="" />MLX</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <label for="provider">Engine</label>
+            <select id="provider">
+              <option value="whispercpp">Whisper.cpp (stable)</option>
+              <option value="mlx">MLX (Apple Silicon)</option>
+            </select>
+          </div>
+          <div class="row">
+            <label for="model">Whisper model</label>
+            <select id="model">
+              <option value="tiny">tiny (39M)</option>
+              <option value="base">base (74M)</option>
+              <option value="base.en">base.en (142 MB)</option>
+              <option value="small">small (244M)</option>
+              <option value="small.en">small.en (466 MB)</option>
+              <option value="medium">medium (769M)</option>
+              <option value="medium.en">medium.en (1.5 GB)</option>
+            </select>
+          </div>
+          <div class="row">
+            <label for="mlxModel">MLX model id</label>
+            <input id="mlxModel" type="text" placeholder="mlx-community/whisper-large-v3-turbo" />
+          </div>
+          <div class="row">
+            <label for="language">Language</label>
+            <select id="language">
+              <option value="en">English</option>
+              <option value="zh">Chinese (Mandarin)</option>
+              <option value="fr">French</option>
+              <option value="auto">Auto Detect</option>
+            </select>
+          </div>
+          <div class="buttons">
+            <button id="downloadModel">Download Model</button>
+            <button id="toggleRecord" class="primary">Start Dictation</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Controls & Routing</h2>
+          <div class="row">
+            <label for="hotkeyInput">Keyboard shortcut</label>
+            <input id="hotkeyInput" type="text" placeholder="CommandOrControl+Shift+Space" />
+          </div>
+          <div class="buttons">
+            <button id="saveHotkey">Save Hotkey</button>
+          </div>
+
+          <h3>LM Studio Polish</h3>
+          <label class="checkline"><input id="lmStudioEnabled" type="checkbox" /> <img src="assets/icon-lmstudio.svg" alt="" /> Improve punctuation with local LLM</label>
+          <div class="row">
+            <label for="lmStudioBaseUrl">Base URL</label>
+            <input id="lmStudioBaseUrl" type="text" value="http://127.0.0.1:1234/v1" />
+          </div>
+          <div class="row">
+            <label for="lmStudioModel">Model id</label>
+            <input id="lmStudioModel" type="text" placeholder="local model id" />
+          </div>
+
+          <h3>OpenRouter Voice</h3>
+          <label class="checkline"><input id="openRouterEnabled" type="checkbox" /> <img src="assets/icon-openrouter.svg" alt="" /> Use OpenRouter cloud polish</label>
+          <div class="row">
+            <label for="openRouterApiKey">OpenRouter API key</label>
+            <input id="openRouterApiKey" type="password" placeholder="sk-or-v1-..." />
+          </div>
+          <div class="row">
+            <label for="openRouterBaseUrl">Base URL</label>
+            <input id="openRouterBaseUrl" type="text" value="https://openrouter.ai/api/v1" />
+          </div>
+          <div class="row">
+            <label for="openRouterModel">Voice model</label>
+            <select id="openRouterModel">
+              <option value="mistralai/voxtral-small-24b-2507">mistralai/voxtral-small-24b-2507</option>
+            </select>
+          </div>
+          <div class="buttons">
+            <button id="refreshOpenRouterModels">Refresh OpenRouter Models</button>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid-two">
+        <article class="card">
+          <h2>Hardware Scan</h2>
+          <div class="buttons">
+            <button id="scanHardware">Scan Hardware</button>
+          </div>
+          <ul id="hardwareList"></ul>
+        </article>
+
+        <article class="card">
+          <h2>Benchmark</h2>
+          <div class="buttons">
+            <button id="runBenchmark">Run Benchmark</button>
+            <button id="clearBenchmark">Clear</button>
+          </div>
+          <pre id="benchmarkOutput"></pre>
+        </article>
+      </section>
+
       <section class="card">
-        <div class="row">
-          <label for="model">Model</label>
-          <select id="model">
-            <option value="tiny">tiny (39M, multilingual)</option>
-            <option value="base">base (74M, multilingual)</option>
-            <option value="base.en">base.en (142 MB)</option>
-            <option value="small">small (244M, multilingual)</option>
-            <option value="small.en">small.en (466 MB)</option>
-            <option value="medium">medium (769M, multilingual)</option>
-            <option value="medium.en">medium.en (1.5 GB)</option>
-          </select>
+        <div class="card-title-row">
+          <h2>Model Discovery</h2>
+          <span class="provider-badge provider-hf"><img src="assets/icon-huggingface.svg" alt="" /> Hugging Face ASR</span>
         </div>
         <div class="row">
-          <label for="language">Language</label>
-          <select id="language">
-            <option value="en">English</option>
-            <option value="zh">Chinese (Mandarin)</option>
-            <option value="auto">Auto Detect</option>
-          </select>
+          <label for="modelSearch">Search</label>
+          <input id="modelSearch" type="text" placeholder="voxtral, qwen3-asr, whisper, moonshine" />
         </div>
         <div class="buttons">
-          <button id="downloadModel">Download Model</button>
-          <button id="toggleRecord" class="primary">Start Dictation</button>
+          <button id="searchModels">Find Models</button>
         </div>
+        <ul id="modelSearchResults" class="model-list"></ul>
       </section>
 
       <section class="card">
-        <h2>LM Studio Polish</h2>
-        <div class="row row-stack">
-          <label class="checkline"><input id="lmStudioEnabled" type="checkbox" /> Improve punctuation via local LLM</label>
-        </div>
-        <div class="row">
-          <label for="lmStudioBaseUrl">Base URL</label>
-          <input id="lmStudioBaseUrl" type="text" value="http://127.0.0.1:1234/v1" />
-        </div>
-        <div class="row">
-          <label for="lmStudioModel">Model (optional)</label>
-          <input id="lmStudioModel" type="text" placeholder="Leave blank to use LM Studio default" />
-        </div>
+        <h2>Live Transcript</h2>
+        <textarea id="liveTranscript" rows="5" placeholder="Streaming transcript appears here while you dictate..."></textarea>
       </section>
 
-      <section class="card">
-        <h2>Status</h2>
-        <ul id="statusList"></ul>
-      </section>
-
-      <section class="card">
-        <h2>Activity</h2>
-        <pre id="logs"></pre>
+      <section class="grid-two">
+        <article class="card">
+          <h2>Status</h2>
+          <ul id="statusList"></ul>
+        </article>
+        <article class="card">
+          <h2>Activity</h2>
+          <pre id="logs"></pre>
+        </article>
       </section>
     </main>
 

@@ -1,0 +1,12 @@
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OpenRouter icon">
+  <defs>
+    <linearGradient id="orGrad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4f8cff"/>
+      <stop offset="1" stop-color="#2455d6"/>
+    </linearGradient>
+  </defs>
+  <circle cx="12" cy="12" r="10" fill="#0d1a3b"/>
+  <path d="M6.5 12a5.5 5.5 0 0 1 11 0" stroke="url(#orGrad)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <path d="M17.5 12a5.5 5.5 0 0 1-11 0" stroke="#7ab0ff" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <circle cx="12" cy="12" r="2.2" fill="#9dd1ff"/>
+</svg>
